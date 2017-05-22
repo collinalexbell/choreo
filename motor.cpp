@@ -5,8 +5,9 @@
 
 Motor::Motor
 (int servo_pin, int start_pos):
-  command_queue(command_queue), pos(start_pos), servo_pin(servo_pin){
+   pos(start_pos), servo_pin(servo_pin){
 
+  command_queue = NULL;
   servo.attach(servo_pin);
   servo.write(start_pos);
 };
@@ -27,12 +28,18 @@ void Motor::set_bounds(int upper, int lower){
 void Motor::take_time_step(){
   //Fetch the command and check if it is ready to be sent
   if(command_queue){
+    //delay(500);
     cur_command = command_queue->front();
-
-    if(millis() >= cur_command->time){
-      send_command_to_physical_motor();
-      command_queue->pop();
+    if(!cur_command){
+      // The command_queue has finished
+      delete command_queue;
+      command_queue = NULL;
     }
+    if(millis() >= cur_command->time){
+      command_queue->pop();
+      pos = cur_command->pos;
+    }
+    send_pos_to_physical_motor();
 
     //If command was sent to the physical motor:
     //    Pop deletes the memory containing the command
@@ -44,9 +51,8 @@ void Motor::take_time_step(){
   }
 };
 
-void Motor::send_command_to_physical_motor(){
-  if(cur_command->pos >= lower_bound && cur_command->pos <= upper_bound){
-    servo.write(cur_command->pos);
-    pos = cur_command->pos;
+void Motor::send_pos_to_physical_motor(){
+  if(pos >= lower_bound && pos <= upper_bound){
+    servo.write(pos);
   };
 };

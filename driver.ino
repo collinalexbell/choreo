@@ -60,11 +60,14 @@ void recieve_and_parse_command(){
 }
 
 void setup() {
-  Motor neck_motor(10, 90);
-  Motor head_motor(11, 75);
-  pinMode(motor_switch, OUTPUT);
-  delay(1000);
   Serial.begin(9600);
+  Serial.println("Starting new code");
+  neck_motor = new Motor(10, 90);
+  head_motor = new Motor(11, 75);
+  Serial.println("Successfully constructed motors");
+  pinMode(motor_switch, OUTPUT);
+  //digitalWrite(motor_switch, HIGH);
+  delay(1000);
   BTSerial.begin(9600);
 }
 /*
@@ -143,14 +146,16 @@ Linear_Procedural_Command_Queue* tmp_command_q;
 int tmp_dest_pos;
 
 void handle_commands(){
-   if(BTSerial.available() > 0){
-    instruction = BTSerial.parseInt();
-    amount = BTSerial.parseInt();
-    duration = BTSerial.parseInt();
-    BTSerial.read();
+
+   if(Serial.available() > 0){
+    instruction = Serial.parseInt();
+    amount = Serial.parseInt();
+    duration = Serial.parseInt();
+    Serial.read();
 
     switch(instruction){
     case 0:
+      Serial.println("Received Command");
       tmp_dest_pos = neck_motor->get_pos() - amount;
       tmp_command_q = new Linear_Procedural_Command_Queue(neck_motor->get_pos(),
                                                           tmp_dest_pos,
@@ -174,13 +179,13 @@ void handle_commands(){
       look_down(amount, thespeed);
       BTSerial.println(head_pos);
       break;
+      */
     case 4:
       digitalWrite(motor_switch, HIGH);
       break;
     case 5:
       digitalWrite(motor_switch, LOW);
       break;
-      */
     default:
       break;
     }

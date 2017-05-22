@@ -57,6 +57,7 @@ private:
   float dPos_dMillis;;
   float dMillis_dPos;;
   Motor_Command* next;;
+  Motor_Command* cache;;
 };
 
 

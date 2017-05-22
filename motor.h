@@ -11,10 +11,10 @@ class Motor{
   Motor_Command_Queue* command_queue = NULL;
   int pos;
   int servo_pin;
-  int upper_bound = 0;
-  int lower_bound = 180;
+  int upper_bound = 180;
+  int lower_bound = 0;
   Motor_Command* cur_command;
-  void send_command_to_physical_motor();
+  void send_pos_to_physical_motor();
  public:
   Motor(int servo_pin, int start_pos);
   void add_command_queue(Motor_Command_Queue* q);

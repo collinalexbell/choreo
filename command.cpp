@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include "command.h"
+#include "util.h"
+
 #define LPC Linear_Procedural_Command_Queue
 
 LPC::LPC(int start_pos, int dest_pos, int duration)
   : start_pos(start_pos), dest_pos(dest_pos), duration(duration)
 {
-  dPos_dMillis = (dest_pos - start_pos)/duration;
+  dPos_dMillis = (dest_pos - start_pos)/((float)duration);
   dMillis_dPos = 1/dPos_dMillis;
 
   //Set start_time on initial front() call.
@@ -15,6 +17,7 @@ LPC::LPC(int start_pos, int dest_pos, int duration)
   next_position_absolute = start_pos;
   next_position_delta = 0;
   next = NULL;
+  cache = NULL;
 };
 
 
@@ -28,21 +31,26 @@ Motor_Command* LPC::front(){
 
   //After pop is called (or on initial front()),
   //next is NULL and must be instantiated
-  if(next == NULL && next_position_absolute != dest_pos){
-    //If the position has not reached dest post...
+  if(next == NULL){
+
+    //If the position has not reached dest pos...
     //... then set `next` to the new Motor Command
+    if(next_position_absolute != dest_pos){
+      //Generate the next (future) position given the current time
+      next_position_delta = ((cur_time - start_time) * dPos_dMillis) + 1;
+      next_position_absolute = start_pos + next_position_delta;
 
-    //Generate the next (future) position given the current time
-    next_position_delta = ((cur_time - start_time) * dPos_dMillis) + 1;
-    next_position_absolute = start_pos + next_position_delta;
-
-    //Generate the next time given the next position
-    next_time = (dMillis_dPos * next_position_delta) + start_time;
-    next = new Motor_Command(next_time, next_position_absolute);
+      //Generate the next time given the next position
+      next_time = (dMillis_dPos * next_position_delta) + start_time;
+      next = new Motor_Command(next_time, next_position_absolute);
+    }
+    //Else IMPLICIT If the position has reached dest pos
+    // then set 'next' to the cache
   }
   //Either:
   //   next has been set to a new Motor_Command
   //   next is set to the last Motor_Command generated
+  //   next is null because there are no more commands to give out
   return next;
 };
 
@@ -51,7 +59,8 @@ void LPC::pop(){
   // Else dangling pointers will ensue
   delete next;
   next = NULL;
-}
+
+};
 
 int LPC::size(){
   //Will return the number of commands until reaching destination
@@ -63,4 +72,4 @@ int LPC::size(){
     rv = (dest_pos - start_pos) - next_position_delta;
   }
   return rv;
-}
+};
