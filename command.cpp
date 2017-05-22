@@ -33,8 +33,7 @@ Motor_Command* LPC::front(){
   //next is NULL and must be instantiated
   if(next == NULL){
 
-    //If the position has not reached dest pos...
-    //... then set `next` to the new Motor Command
+    //..but only if the position has not reached dest pos...
     if(next_position_absolute != dest_pos){
       //Generate the next (future) position given the current time
       next_position_delta = ((cur_time - start_time) * dPos_dMillis) + 1;
@@ -44,13 +43,11 @@ Motor_Command* LPC::front(){
       next_time = (dMillis_dPos * next_position_delta) + start_time;
       next = new Motor_Command(next_time, next_position_absolute);
     }
-    //Else IMPLICIT If the position has reached dest pos
-    // then set 'next' to the cache
   }
   //Either:
   //   next has been set to a new Motor_Command
   //   next is set to the last Motor_Command generated
-  //   next is null because there are no more commands to give out
+  //   next is null because this linear movement has finished
   return next;
 };
 
