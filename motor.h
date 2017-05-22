@@ -8,18 +8,18 @@
 class Motor{
  private:
   Servo servo;
-  Motor_Command_Queue* command_queue;
+  Motor_Command_Queue* command_queue = NULL;
   int pos;
   int servo_pin;
-  int motor_switch_pin;
   int upper_bound = 0;
   int lower_bound = 180;
   Motor_Command* cur_command;
   void send_command_to_physical_motor();
  public:
-  Motor(int servo_pin, int motor_switch_pin,
-        Motor_Command_Queue* command_queue, int start_pos);
-  void time_step();
+  Motor(int servo_pin, int start_pos);
+  void add_command_queue(Motor_Command_Queue* q);
+  void take_time_step();
+  int get_pos();
   void set_bounds(int upper, int lower);
 };
 

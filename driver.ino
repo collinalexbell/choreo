@@ -4,8 +4,8 @@
 #include <SoftwareSerial.h>
 #include "LinkedList.h"
 
-Servo neck;  // create servo object to control a servo
-Servo head;
+Motor* neck_motor;  // create servo object to control a servo
+Motor* head_motor;
 // twelve servo objects can be created on most boards
 
 int neck_pos = 0;    // variable to store the servo position
@@ -13,7 +13,7 @@ int head_pos = 0;
 int motor_switch = 8;
 bool g = true;
 int i;
-int instruction, amount, thespeed;
+int instruction, amount, duration;
 
 SoftwareSerial BTSerial(6, 5); // RX | TX
 
@@ -60,19 +60,14 @@ void recieve_and_parse_command(){
 }
 
 void setup() {
-  neck.attach(10);  // attaches the servo on pin 9 to the servo object
-  neck.write(90);
-  head.attach(11);
-  head.write(85);
+  Motor neck_motor(10, 90);
+  Motor head_motor(11, 75);
   pinMode(motor_switch, OUTPUT);
-  neck_pos = 90;
-  head_pos = 75;
   delay(1000);
   Serial.begin(9600);
   BTSerial.begin(9600);
-
 }
-
+/*
 int look_left(int amount, int speed){
   //Relative to a person looking at the camera
   digitalWrite(motor_switch, HIGH);
@@ -126,7 +121,7 @@ int look_down(int amount, int speed){
   }
   digitalWrite(motor_switch, LOW);
 }
-
+*/
 /*
 
   void loop(){
@@ -138,29 +133,39 @@ int look_down(int amount, int speed){
   handle_commands();
 
   //Grab the next commands of the queue and if there are any, then execute
-  neck_motor.step()
+  neck_motor->step()
   head_motor.step()
 
   }
 */
 
-void loop() {
+Linear_Procedural_Command_Queue* tmp_command_q;
+int tmp_dest_pos;
 
-  if(BTSerial.available() > 0){
+void handle_commands(){
+   if(BTSerial.available() > 0){
     instruction = BTSerial.parseInt();
     amount = BTSerial.parseInt();
-    thespeed = BTSerial.parseInt();
+    duration = BTSerial.parseInt();
     BTSerial.read();
 
     switch(instruction){
     case 0:
-      look_left(amount, thespeed);
-      BTSerial.println(neck_pos);
+      tmp_dest_pos = neck_motor->get_pos() - amount;
+      tmp_command_q = new Linear_Procedural_Command_Queue(neck_motor->get_pos(),
+                                                          tmp_dest_pos,
+                                                          duration);
+      neck_motor->add_command_queue(tmp_command_q);
       break;
+
     case 1:
-      look_right(amount, thespeed);
-      BTSerial.println(neck_pos);
+      tmp_dest_pos = neck_motor->get_pos() + amount;
+      tmp_command_q = new Linear_Procedural_Command_Queue(neck_motor->get_pos(),
+                                                          tmp_dest_pos,
+                                                          duration);
+      neck_motor->add_command_queue(tmp_command_q);
       break;
+      /*
     case 2:
       look_up(amount, thespeed);
       BTSerial.println(head_pos);
@@ -175,9 +180,17 @@ void loop() {
     case 5:
       digitalWrite(motor_switch, LOW);
       break;
+      */
     default:
       break;
     }
   }
 }
 
+
+
+void loop() {
+  handle_commands();
+  neck_motor->take_time_step();
+  head_motor->take_time_step();
+}
