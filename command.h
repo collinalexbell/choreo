@@ -25,7 +25,8 @@ public:
   For low latency serial connections, command queues could be implemented on top of Serial
  */
 
-class Motor_Command_Queue{
+class Motor_Command_Queue
+{
 public:
   virtual Motor_Command* front() =0;
   virtual void pop() =0;
@@ -39,7 +40,8 @@ public:
   A Motor Command Queue that procedurally generates the commands to get from a start position to a dest position in a linear way. Make sure to ALWAYS call pop only after using the returned Motor_Command as pop deallocates the memory for the command
  */
 
-class Linear_Procedural_Command_Queue :public Motor_Command_Queue {
+class Linear_Procedural_Command_Queue :public Motor_Command_Queue
+{
 public:
   Linear_Procedural_Command_Queue(int start_pos, int dest_pos, int duration);
   Motor_Command* front();
