@@ -1,8 +1,8 @@
-#ifndef MULTI_MOTOR_COMMAND_Q_H
-#define MUTLI_MOTOR_COMMAND_Q_H
+#ifndef SINGLE_MOTOR_CHOREO_Q_H
+#define SINGLE_MOTOR_CHOREO_Q_H
 
 #include "command.h"
-#define CHOREO_SIZE_ALLOCATED 5
+#include "constants.h"
 
 /*
   Single_Motor_Choreo_Queue
@@ -20,9 +20,9 @@ class Single_Motor_Choreo_Queue: public Motor_Command_Queue
   void insert(Motor_Command_Queue* q);
  private:
   int root_index = 0;
-  Motor_Command_Queue* mcq_buf[CHOREO_SIZE_ALLOCATED];
+  Motor_Command_Queue* mcq_buf[CHOREO_COMMAND_SIZE_ALLOCATED];
   int last_index = 0;
-  int mcq_buf_size = CHOREO_SIZE_ALLOCATED;
+  int mcq_buf_size = CHOREO_COMMAND_SIZE_ALLOCATED;
   bool more_commands_to_execute = false;
 };
 

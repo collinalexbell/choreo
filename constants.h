@@ -1,0 +1,7 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define CHOREO_COMMAND_SIZE_ALLOCATED 5
+#define NUMBER_OF_MOTORS 2
+
+#endif
