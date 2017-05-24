@@ -11,46 +11,47 @@ Motor_Command* SMCQ::front()
   //This is done by setting root to root->next.
 
   Motor_Command* rv;
-  rv = root->q->front();
+  rv = mcq_buf[root_index]->front();
 
   //Move on to the next node (hence the "multi" part of the name)
   if(!rv){
-    if(!root->next){
+    //On a circular buffer, the root index == last_index if no next
+    if(root_index == last_index){
       //SMCQ has been fully executed
+      more_commands_to_execute = false;
       return NULL;
     }
-    tmp_node = root->next;
-    delete root;
-    root = tmp_node;
+    root_index = (root_index + 1) % mcq_buf_size;
     rv = front();
   }
-
   Serial.println(rv->pos);
   return rv;
 }
 
 void SMCQ::pop()
 {
-  root->q->pop();
+  mcq_buf[root_index]->pop();
 }
 
 int SMCQ::size()
 {
-  int s;
-  while(tmp_node){
-    s + tmp_node->q->size();
-    tmp_node = tmp_node->next;
-  }
-  return s;
+  return 1;
 }
 
 void SMCQ::insert(Motor_Command_Queue* q)
 {
-  if(!root){
-    root = new Node(q);
+  //If there are more commands to execute
+  //then that means there is a valid root
+  //which means the new q gets inserted after the last index
+  if(more_commands_to_execute){
+    last_index = (last_index + 1) % mcq_buf_size;
+    mcq_buf[last_index] = q;
   }else{
-    tmp_node = root;
-    while(tmp_node->next) tmp_node = tmp_node->next;
-    tmp_node->next = new Node(q);
+    //Otherwise, there is no valid data,
+    //and everything can be over written, start at 0
+    mcq_buf[0] = q;
+    last_index = 0;
+    root_index = 0;
+    more_commands_to_execute = true;
   }
 }

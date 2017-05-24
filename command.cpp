@@ -17,15 +17,11 @@ LPC::LPC(int start_pos, int dest_pos, int duration)
   next_position_absolute = start_pos;
   next_position_delta = 0;
   next = NULL;
-  cache = NULL;
 };
 
 
 Motor_Command* LPC::front(){
-  //First call the RV will be used.
-  //However, in subsequent calls, the rv will be calculated and returned, but not used by the motor.
 
-  Motor_Command* rv;
   cur_time = millis();
   if(start_time == -1) start_time = cur_time;
 
@@ -34,14 +30,28 @@ Motor_Command* LPC::front(){
   if(next == NULL){
 
     //..but only if the position has not reached dest pos...
-    if(next_position_absolute != dest_pos){
+    if((next_position_absolute < dest_pos && dPos_dMillis > 0) ||
+       (next_position_absolute > dest_pos && dPos_dMillis < 0)){
       //Generate the next (future) position given the current time
       next_position_delta = ((cur_time - start_time) * dPos_dMillis) + 1;
       next_position_absolute = start_pos + next_position_delta;
 
+      //Guard against over shooting
+      if(dPos_dMillis > 0 && next_position_absolute > dest_pos){
+        next_position_absolute = dest_pos;
+      }
+      if(dPos_dMillis < 0 && next_position_absolute < dest_pos){
+        next_position_absolute = dest_pos;
+      }
+
       //Generate the next time given the next position
       next_time = (dMillis_dPos * next_position_delta) + start_time;
-      next = new Motor_Command(next_time, next_position_absolute);
+      next_obj = Motor_Command(next_time, next_position_absolute);
+
+      //Return a pointer to the member variable
+      //It is dirty, I know, but it is fast.
+      //Also, this class much doesn't care if the command gets altered
+      next = &next_obj;
     }
   }
   //Either:
@@ -54,7 +64,6 @@ Motor_Command* LPC::front(){
 void LPC::pop(){
   // Pop must only be called after one uses the Motor_Command.
   // Else dangling pointers will ensue
-  delete next;
   next = NULL;
 
 };

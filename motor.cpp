@@ -32,10 +32,12 @@ void Motor::take_time_step(){
     cur_command = command_queue->front();
     if(!cur_command){
       // The command_queue has finished
-      delete command_queue;
       command_queue = NULL;
     }
-    if(millis() >= cur_command->time){
+    Serial.print("Cur_command_time: ");
+    Serial.print(cur_command->time);
+    Serial.print("\n");
+    if(cur_command && millis() >= cur_command->time){
       command_queue->pop();
       pos = cur_command->pos;
     }

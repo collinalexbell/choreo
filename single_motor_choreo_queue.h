@@ -2,12 +2,7 @@
 #define MUTLI_MOTOR_COMMAND_Q_H
 
 #include "command.h"
-
-struct Node{
-  Node(Motor_Command_Queue* q_){q = q_;};
-  Node* next = NULL;
-  Motor_Command_Queue* q;
-};
+#define CHOREO_SIZE_ALLOCATED 5
 
 /*
   Single_Motor_Choreo_Queue
@@ -24,8 +19,11 @@ class Single_Motor_Choreo_Queue: public Motor_Command_Queue
   int size();
   void insert(Motor_Command_Queue* q);
  private:
-  Node* root = NULL;
-  Node* tmp_node;
+  int root_index = 0;
+  Motor_Command_Queue* mcq_buf[CHOREO_SIZE_ALLOCATED];
+  int last_index = 0;
+  int mcq_buf_size = CHOREO_SIZE_ALLOCATED;
+  bool more_commands_to_execute = false;
 };
 
 #endif

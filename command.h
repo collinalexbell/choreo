@@ -9,6 +9,10 @@
 struct Motor_Command{
 public:
   Motor_Command(unsigned long time, int pos) : time(time), pos(pos){};
+  Motor_Command(){
+    time=-1;
+    pos=90;
+  };
   unsigned long  time; //Time to execute command (using millis())
   int  pos;  //Position in some position space (most likely degrees)
 };
@@ -43,6 +47,7 @@ public:
 class Linear_Procedural_Command_Queue :public Motor_Command_Queue
 {
 public:
+  Linear_Procedural_Command_Queue(){};
   Linear_Procedural_Command_Queue(int start_pos, int dest_pos, int duration);
   Motor_Command* front();
   void pop();
@@ -58,8 +63,8 @@ private:
   int dest_pos;;
   float dPos_dMillis;;
   float dMillis_dPos;;
+  Motor_Command next_obj;;
   Motor_Command* next;;
-  Motor_Command* cache;;
 };
 
 
