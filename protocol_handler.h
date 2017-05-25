@@ -7,9 +7,9 @@
 #include "command.h"
 
 
-#define MOTOR_INDEX int_buffer[0]
-#define AMOUNT int_buffer[1]
-#define DURATION int_buffer[2]
+#define MOTOR_INDEX short_buffer[0]
+#define AMOUNT short_buffer[1]
+#define DURATION short_buffer[2]
 
 Motor* motors[NUMBER_OF_MOTORS];
 Linear_Procedural_Command_Queue lpcqs[NUM_LPCQ];
@@ -93,7 +93,7 @@ Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
   =============================
  */
 
-int create_lpcq(int *int_buffer){
+int create_lpcq(short *short_buffer){
 
   char char_buffer[5];
   int  i;
@@ -101,7 +101,7 @@ int create_lpcq(int *int_buffer){
 
 
   //Amount
-   AMOUNT = (unsigned char)char_buffer[0] << 8 | (unsigned char)char_buffer[1];
+  AMOUNT = (unsigned char)char_buffer[0] << 8 | (unsigned char)char_buffer[1];
 
   //Duration
   DURATION = (unsigned char)char_buffer[2] << 8 | (unsigned char)char_buffer[3];
@@ -162,11 +162,11 @@ void handle_serial_commands
       digitalWrite(MOTOR_SWITCH_PIN, HIGH);
       break;
     case(2):
-      int int_buffer[5];
+      short short_buffer[5];
       Serial.println("LPCQ");
       Serial.readBytes(char_buffer, 1);
       MOTOR_INDEX = (int)char_buffer[0];
-      i = create_lpcq(int_buffer);
+      i = create_lpcq(short_buffer);
       //If successfully created an lpcq:
       if(i>=0){
         lpcqs[i] = Linear_Procedural_Command_Queue(
