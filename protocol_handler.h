@@ -7,6 +7,10 @@
 #include "command.h"
 
 
+#define MOTOR_INDEX int_buffer[0]
+#define AMOUNT int_buffer[1]
+#define DURATION int_buffer[2]
+
 Motor* motors[NUMBER_OF_MOTORS];
 Linear_Procedural_Command_Queue lpcqs[NUM_LPCQ];
 Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
@@ -89,23 +93,21 @@ Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
   =============================
  */
 
-void create_lpcq(){
+int create_lpcq(int *int_buffer){
 
   char char_buffer[5];
-  int  int_buffer[3], i;
-  Serial.readBytes(char_buffer, 5);
+  int  i;
+  Serial.readBytes(char_buffer, 4);
 
-  int_buffer[0] = (int)char_buffer[0];
 
   //Amount
-  int_buffer[1] = (unsigned char)char_buffer[1] << 8 | (unsigned char)char_buffer[2];
+   AMOUNT = (unsigned char)char_buffer[0] << 8 | (unsigned char)char_buffer[1];
 
   //Duration
-  int_buffer[2] = (unsigned char)char_buffer[3] << 8 | (unsigned char)char_buffer[4];
+  DURATION = (unsigned char)char_buffer[2] << 8 | (unsigned char)char_buffer[3];
 
-  Serial.println(int_buffer[0]);
-  Serial.println(int_buffer[1]);
-  Serial.println(int_buffer[2]);
+  Serial.println(AMOUNT);
+  Serial.println(DURATION);
 
   //Find an available LPCQ
   for(i=0;i<NUM_LPCQ;i++){
@@ -122,27 +124,20 @@ void create_lpcq(){
   //Are there any lpcqs available and is the command within bounds
   if(i != NUM_LPCQ
      &&
-     motors[int_buffer[0]]->get_pos() + int_buffer[1] >=
-     motors[int_buffer[0]]->get_lower_bound()
+     motors[MOTOR_INDEX]->get_pos() + AMOUNT >=
+     motors[MOTOR_INDEX]->get_lower_bound()
      &&
-     motors[int_buffer[0]]->get_pos() + int_buffer[1] <=
-     motors[int_buffer[0]]->get_upper_bound())
+     motors[MOTOR_INDEX]->get_pos() + AMOUNT <=
+     motors[MOTOR_INDEX]->get_upper_bound())
     {
-      lpcqs[i] =
-        Linear_Procedural_Command_Queue(motors[int_buffer[0]]->get_pos(),
-
-                                        motors[int_buffer[0]]->get_pos()
-                                        + int_buffer[1],
-
-                                        int_buffer[2]);
-
-      motors[int_buffer[0]]->add_command_queue(&lpcqs[0]);
-
+      return i;
   //Pick out the error
   }else if(i == NUM_LPCQ){
     Serial.println("No LPCQs available");
+    return -1;
   }else{
     Serial.println("Dest position is out of bounds");
+    return -2;
   }
 }
 
@@ -167,8 +162,20 @@ void handle_serial_commands
       digitalWrite(MOTOR_SWITCH_PIN, HIGH);
       break;
     case(2):
+      int int_buffer[5];
       Serial.println("LPCQ");
-      create_lpcq();
+      Serial.readBytes(char_buffer, 1);
+      MOTOR_INDEX = (int)char_buffer[0];
+      i = create_lpcq(int_buffer);
+      //If successfully created an lpcq:
+      if(i>=0){
+        lpcqs[i] = Linear_Procedural_Command_Queue(
+                      motors[MOTOR_INDEX]->get_pos(),
+                      motors[MOTOR_INDEX]->get_pos() + AMOUNT,
+                      DURATION);
+
+        motors[MOTOR_INDEX]->add_command_queue(&lpcqs[0]);
+      }
       break;
     case(3):
       Serial.println("SMCQ");
