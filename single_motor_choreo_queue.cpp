@@ -9,6 +9,17 @@ Motor_Command* SMCQ::front()
   //Uses recursion.
   //If root->q->front is null, then the next node should be used
   //This is done by setting root to root->next.
+  if(!active || !more_commands_to_execute){
+    Serial.println("Auto return NULL");
+    Serial.print("Not Active: ");
+    Serial.print(!active);
+    Serial.print("\n");
+
+    Serial.print("Not More_Commands: ");
+    Serial.print(!more_commands_to_execute);
+    Serial.print("\n");
+    return NULL;
+  }
 
   Motor_Command* rv;
   rv = mcq_buf[root_index]->front();
@@ -21,10 +32,11 @@ Motor_Command* SMCQ::front()
       more_commands_to_execute = false;
       return NULL;
     }
+    Serial.println("Moving to next LPCQ");
     root_index = (root_index + 1) % mcq_buf_size;
     rv = front();
   }
-  Serial.println(rv->pos);
+  //Serial.println(rv->pos);
   return rv;
 }
 
@@ -40,6 +52,7 @@ int SMCQ::size()
 
 void SMCQ::insert(Motor_Command_Queue* q)
 {
+  active = true;
   //If there are more commands to execute
   //then that means there is a valid root
   //which means the new q gets inserted after the last index

@@ -36,6 +36,7 @@ public:
   virtual void pop() =0;
   virtual int  size() =0;
   virtual void deactivate() = 0;
+  virtual bool is_active() = 0;
 };
 
 
@@ -48,12 +49,13 @@ public:
 class Linear_Procedural_Command_Queue :public Motor_Command_Queue
 {
 public:
-  Linear_Procedural_Command_Queue(){};
+  Linear_Procedural_Command_Queue(){active=false;};
   Linear_Procedural_Command_Queue(int start_pos, int dest_pos, int duration);
   Motor_Command* front();
   void pop();
   int size();
   void deactivate();
+  bool is_active(){return active;};
 private:
   bool active = true;;
   int duration;;

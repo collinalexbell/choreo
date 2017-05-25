@@ -23,6 +23,7 @@ public:
   void pop();
   int size();
   void deactivate(){active = false;};
+  bool is_active(){return active;};
   //------------------------
 
   void insert(Single_Motor_Choreo_Queue* q);

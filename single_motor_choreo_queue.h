@@ -13,12 +13,13 @@
 class Single_Motor_Choreo_Queue: public Motor_Command_Queue
 {
  public:
-  Single_Motor_Choreo_Queue(){};
+  Single_Motor_Choreo_Queue(){active = false;};
   Motor_Command* front();
   void pop();
   int size();
   void insert(Motor_Command_Queue* q);
   void deactivate(){active = false;};
+  bool is_active(){return active;};
  private:
   bool active = true;
   int root_index = 0;

@@ -37,9 +37,9 @@ void Motor::take_time_step(){
       // The command_queue has finished
       command_queue = NULL;
     }
-    Serial.print("Cur_command_time: ");
-    Serial.print(cur_command->time);
-    Serial.print("\n");
+    //Serial.print("Cur_command_pos: ");
+    //Serial.print(cur_command->pos);
+    //Serial.print("\n");
     if(cur_command && millis() >= cur_command->time){
       command_queue->pop();
       pos = cur_command->pos;
@@ -53,6 +53,7 @@ void Motor::take_time_step(){
     //    It will be sent in the future
     //    Therefore, also set cur_command to NULL
     cur_command = NULL;
+    Serial.println(pos);
   }
 };
 

@@ -27,18 +27,22 @@ Motor_Command* LPC::front(){
   }
 
   cur_time = millis();
-  if(start_time == -1) start_time = cur_time;
+  if(start_time == -1){
+    start_time = cur_time;
+  }
 
   //After pop is called (or on initial front()),
   //next is NULL and must be instantiated
   if(next == NULL){
 
+    //Generate the next (future) position given the current time
+    next_position_delta = ((cur_time - start_time) * dPos_dMillis) + 1;
+    next_position_absolute = start_pos + next_position_delta;
+
+    //and send it next_position
     //..but only if the position has not reached dest pos...
     if((next_position_absolute < dest_pos && dPos_dMillis > 0) ||
        (next_position_absolute > dest_pos && dPos_dMillis < 0)){
-      //Generate the next (future) position given the current time
-      next_position_delta = ((cur_time - start_time) * dPos_dMillis) + 1;
-      next_position_absolute = start_pos + next_position_delta;
 
       //Guard against over shooting
       if(dPos_dMillis > 0 && next_position_absolute > dest_pos){
@@ -56,6 +60,8 @@ Motor_Command* LPC::front(){
       //It is dirty, I know, but it is fast.
       //Also, this class much doesn't care if the command gets altered
       next = &next_obj;
+    }else{
+      active = false;
     }
   }
   //Either:
