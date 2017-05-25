@@ -13,6 +13,9 @@ Motor::Motor
 };
 
 void Motor::add_command_queue(Motor_Command_Queue* q){
+  if(command_queue){
+    command_queue->deactivate();
+  }
   command_queue = q;
 }
 
@@ -20,9 +23,9 @@ int Motor::get_pos(){
   return pos;
 }
 
-void Motor::set_bounds(int upper, int lower){
-  upper_bound = upper;
+void Motor::set_bounds(int lower, int upper){
   lower_bound = lower;
+  upper_bound = upper;
 }
 
 void Motor::take_time_step(){

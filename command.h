@@ -35,6 +35,7 @@ public:
   virtual Motor_Command* front() =0;
   virtual void pop() =0;
   virtual int  size() =0;
+  virtual void deactivate() = 0;
 };
 
 
@@ -52,7 +53,9 @@ public:
   Motor_Command* front();
   void pop();
   int size();
+  void deactivate();
 private:
+  bool active = true;;
   int duration;;
   unsigned long start_time;;
   unsigned long next_time;;

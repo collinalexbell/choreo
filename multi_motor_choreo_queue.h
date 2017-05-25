@@ -22,11 +22,13 @@ public:
   Motor_Command* front();
   void pop();
   int size();
+  void deactivate(){active = false;};
   //------------------------
 
   void insert(Single_Motor_Choreo_Queue* q);
 
 private:
+  bool active = true;
   int smcq_index = 0;
   Single_Motor_Choreo_Queue* buf[NUMBER_OF_MOTORS];
   int buf_index = 0;

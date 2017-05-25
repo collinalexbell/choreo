@@ -22,6 +22,10 @@ LPC::LPC(int start_pos, int dest_pos, int duration)
 
 Motor_Command* LPC::front(){
 
+  if(!active){
+    return NULL;
+  }
+
   cur_time = millis();
   if(start_time == -1) start_time = cur_time;
 
@@ -79,3 +83,7 @@ int LPC::size(){
   }
   return rv;
 };
+
+void LPC::deactivate(){
+  active = false;
+}

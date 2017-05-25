@@ -18,7 +18,9 @@ class Single_Motor_Choreo_Queue: public Motor_Command_Queue
   void pop();
   int size();
   void insert(Motor_Command_Queue* q);
+  void deactivate(){active = false;};
  private:
+  bool active = true;
   int root_index = 0;
   Motor_Command_Queue* mcq_buf[CHOREO_COMMAND_SIZE_ALLOCATED];
   int last_index = 0;

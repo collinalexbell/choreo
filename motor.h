@@ -20,7 +20,9 @@ class Motor{
   void add_command_queue(Motor_Command_Queue* q);
   void take_time_step();
   int get_pos();
-  void set_bounds(int upper, int lower);
+  int get_upper_bound(){return upper_bound;};
+  int get_lower_bound(){return lower_bound;};
+  void set_bounds(int lower, int upper);
 };
 
 #endif
