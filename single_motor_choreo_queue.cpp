@@ -22,6 +22,7 @@ Motor_Command* SMCQ::front()
     if(root_index == last_index){
       //SMCQ has been fully executed
       more_commands_to_execute = false;
+      active = false;
       return NULL;
     }
     root_index = (root_index + 1) % mcq_buf_size;

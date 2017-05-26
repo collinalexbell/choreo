@@ -5,6 +5,8 @@
 #include "motor.h"
 #include "constants.h"
 #include "command.h"
+#include "single_motor_choreo_queue.h"
+#include "multi_motor_choreo_queue.h"
 
 
 #define MOTOR_INDEX short_buffer[0]
@@ -14,6 +16,7 @@
 Motor* motors[NUMBER_OF_MOTORS];
 Linear_Procedural_Command_Queue lpcqs[NUM_LPCQ];
 Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
+Multi_Motor_Choreo_Queue mmcq;
 
 
 
@@ -60,7 +63,6 @@ Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
   |           MMCQ            |
   =============================
   |  4                        |
-  |  <code>                   |
   |   <num_motors>            |
   |     <motor>               |
   |      <num LPCQs>          |
@@ -104,13 +106,6 @@ int create_lpcq(short *short_buffer, int start_pos){
   //Duration
   DURATION = (unsigned char)char_buffer[2] << 8 | (unsigned char)char_buffer[3];
 
-  Serial.print("Amount: ");
-  Serial.print(AMOUNT);
-  Serial.print("\n");
-
-  Serial.print("Duration: ");
-  Serial.print(DURATION);
-  Serial.print("\n");
 
   //Find an available LPCQ
   for(i=0;i<NUM_LPCQ;i++){
@@ -149,6 +144,9 @@ int create_lpcq(short *short_buffer, int start_pos){
     return -1;
   }else{
     Serial.println("Dest position is out of bounds");
+    Serial.print("Start Pos: ");
+    Serial.print(start_pos);
+    Serial.print("\n");
     return -2;
   }
 }
@@ -165,7 +163,7 @@ int create_spcq (short* short_buffer){
 
   //Find an available SMCQ
   for(i=0;i<NUM_SMCQ;i++){
-    if(!smcqs[i].front()){
+    if(!smcqs[i].is_active()){
       break;
     }
     //If it didn't break, catch it on the way out
@@ -178,9 +176,6 @@ int create_spcq (short* short_buffer){
   //If a ununsed SMCQ was found
   if(i != NUM_SMCQ){
     smcq_index = i;
-    Serial.print("SMCQ #: ");
-    Serial.print(smcq_index);
-    Serial.print("\n");
     smcqs[smcq_index]=Single_Motor_Choreo_Queue();
 
     int pos_buffer;
@@ -188,7 +183,6 @@ int create_spcq (short* short_buffer){
     for(i=0;i<num_lpcqs;i++){
       status = create_lpcq(short_buffer, pos_buffer);
       if(status>=0){
-        Serial.println("Created LPCQ");
         pos_buffer = pos_buffer + AMOUNT;
 
         smcqs[smcq_index].insert(&lpcqs[status]);
@@ -197,6 +191,23 @@ int create_spcq (short* short_buffer){
     return smcq_index;
   }else{
     return -1;
+  }
+}
+
+void create_mmcq(){
+  short short_buffer[5];
+  short num_motors;
+  char char_buffer[1];
+  short i, smcq_index;
+  mmcq = Multi_Motor_Choreo_Queue();
+  Serial.readBytes(char_buffer, 1);
+  num_motors = char_buffer[0];
+  for (i=0;i<num_motors;i++){
+    smcq_index = create_spcq(short_buffer);
+    if(smcq_index>=0){
+      mmcq.insert(&smcqs[smcq_index]);
+      motors[MOTOR_INDEX]->add_command_queue(&mmcq);
+    }
   }
 }
 
@@ -213,20 +224,14 @@ void handle_serial_commands
     i = char_buffer[0];
     switch(i){
     case(0):
-
-
-
-      Serial.println("motors_off");
       digitalWrite(MOTOR_SWITCH_PIN, LOW);
       break;
     case(1):
-      Serial.println("motors_on");
       digitalWrite(MOTOR_SWITCH_PIN, HIGH);
       break;
     case(2):
       {
         short short_buffer[5];
-        Serial.println("LPCQ");
         Serial.readBytes(char_buffer, 1);
         MOTOR_INDEX = (int)char_buffer[0];
         int start_pos = motors[MOTOR_INDEX]->get_pos();
@@ -240,7 +245,6 @@ void handle_serial_commands
 
     case(3):
       {
-        Serial.println("SMCQ");
         short smcq_index;
 
         //The short_buffer must remain in this scope,
@@ -253,7 +257,7 @@ void handle_serial_commands
       }
       break;
     case(4):
-      Serial.println("MMCQ");
+      create_mmcq();
       break;
     case(5):
       Serial.println("Remaining commands");
