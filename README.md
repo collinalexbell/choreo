@@ -2,11 +2,11 @@
 ## Android/AVR library to create complex servo motor choreographies using a serial protocol 
 
 ## Table of Contents
--Why this library?
--Protocol Written in Raw Bytes
--How to Run Demo
--How to Include into your own Project
--Possible Modifications
+* Why this library?
+* Protocol Written in Raw Bytes
+* How to Run Demo
+* How to Include into your own Project
+* Possible Modifications
 
 ### Why this library?
 I wanted a way to store many commands for servo motors onto a low memory Arduino.
