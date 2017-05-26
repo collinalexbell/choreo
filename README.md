@@ -22,6 +22,8 @@ Move motor 1 -45 degrees taking 2 seconds to do so
 ```
 Each one of these 3 commands is called a *procedure*
 
+Each motor's procedure buffer runs independently, so the above set of procedures would take 2 seconds total to run.
+
 The real protocol is below and is written in raw bytes
 
 ### Limitations:
