@@ -40,6 +40,7 @@ int MMCQ::size(){
 }
 
 void MMCQ::insert(Single_Motor_Choreo_Queue* q){
+  active = true;
   buf[insert_index] = q;
   insert_index++; insert_index%=buf_size;
 }

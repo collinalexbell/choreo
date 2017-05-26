@@ -16,7 +16,7 @@ class Multi_Motor_Choreo_Queue: public Motor_Command_Queue
 */
 {
 public:
-  Multi_Motor_Choreo_Queue(){};
+  Multi_Motor_Choreo_Queue(){active = false;};
   //Motor_Command_Queue interface
   //------------------------
   Motor_Command* front();
