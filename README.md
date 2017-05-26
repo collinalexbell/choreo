@@ -43,7 +43,7 @@ change constants.h
 Also note, that I like to use a set of power transistors to turn power on/off to the servos.
 I toggle off the power whenever the motors aren't moving. 
 My application is fine with this, but yours might not be.
-This wont work if you don't have the resistors wired in.
+This wont work if you don't have power transistors wired in.
 However, if you wish to change how this toogles, then feel free to mess with this code
 
 ```
