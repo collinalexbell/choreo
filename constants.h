@@ -1,9 +1,7 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef _CONSTANTS_H_
+#define _CONSTANTS_H_
 
-#define CHOREO_COMMAND_SIZE_ALLOCATED 5
-#define NUMBER_OF_MOTORS 2
+#define PROC_PER_MOTOR 10
 #define MOTOR_SWITCH_PIN 8
-#define NUM_LPCQ 8
-#define NUM_SMCQ 4
+
 #endif
