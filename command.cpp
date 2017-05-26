@@ -41,8 +41,8 @@ Motor_Command* LPC::front(){
 
     //and send it next_position
     //..but only if the position has not reached dest pos...
-    if((next_position_absolute < dest_pos && dPos_dMillis > 0) ||
-       (next_position_absolute > dest_pos && dPos_dMillis < 0)){
+    if((next_position_absolute <= dest_pos && dPos_dMillis > 0) ||
+       (next_position_absolute >= dest_pos && dPos_dMillis < 0)){
 
       //Guard against over shooting
       if(dPos_dMillis > 0 && next_position_absolute > dest_pos){
