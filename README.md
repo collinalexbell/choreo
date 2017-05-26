@@ -9,6 +9,7 @@ Some modifications you might want to make:
 
 1) Change the number of motors you have connected
 2) Change pins of your motors
+3) Change the Serial to BTSerial
 
 change choreo.h
 ```
@@ -21,6 +22,7 @@ void choreo_setup(){
 
   pinMode(MOTOR_SWITCH_PIN, OUTPUT);
   digitalWrite(MOTOR_SWITCH_PIN, LOW);
+
 }
 ```
 
@@ -33,8 +35,10 @@ change constants.h
 #define PROC_PER_MOTOR 10
 #define MOTOR_SWITCH_PIN 8
 #define NUMBER_OF_MOTORS 2
-
 //CHANGE THIS PERHAPS   ^^
+
+#define SERIAL Serial
+//CHANGE this  ^^     to BTSerial if using BTSerial like me!
 #endif
 ```
 

@@ -5,9 +5,12 @@
 #define MOTOR_SWITCH_PIN 8
 #define NUMBER_OF_MOTORS 2
 
+//Use a macro for use with BTSerial if desired
+#define SERIAL Serial
+
 void serialFlush(){
-  while(Serial.available() > 0) {
-    char t = Serial.read();
+  while(SERIAL.available() > 0) {
+    char t = SERIAL.read();
   }
 }
 
