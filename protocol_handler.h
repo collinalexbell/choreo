@@ -242,6 +242,9 @@ void handle_serial_commands
       {
         Serial.println("SMCQ");
         short smcq_index;
+
+        //The short_buffer must remain in this scope,
+        //because MOTOR_INDEX is defined to short_buffer[0];
         short short_buffer[5];
         smcq_index = create_spcq(short_buffer);
         if(smcq_index >= 0){
