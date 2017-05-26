@@ -10,10 +10,9 @@ Some modifications you might want to make:
 1) Change the number of motors you have connected
 2) Change pins of your motors
 
-change choreo.ino
+change choreo.h
 ```
-void setup(){
-  Serial.begin(9600);
+void choreo_setup(){
   motors[0] = new Motor(0,10,90); //Pin 10 is the servo signal pin
   motors[1] = new Motor(1,11,70); //Pin 11 is the servo signal pin
   
@@ -22,7 +21,6 @@ void setup(){
 
   pinMode(MOTOR_SWITCH_PIN, OUTPUT);
   digitalWrite(MOTOR_SWITCH_PIN, LOW);
-  Serial.println("Starting");
 }
 ```
 
@@ -47,7 +45,9 @@ This wont work if you don't have power transistors wired in.
 However, if you wish to change how this toogles, then feel free to mess with this code
 
 ```
-void loop(){
+//choreo.h
+
+void choreo_loop(){
   handle_command();
   active = false;
   for(i=0;i<NUMBER_OF_MOTORS;i++){

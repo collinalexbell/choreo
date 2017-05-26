@@ -5,6 +5,12 @@
 #define MOTOR_SWITCH_PIN 8
 #define NUMBER_OF_MOTORS 2
 
+void serialFlush(){
+  while(Serial.available() > 0) {
+    char t = Serial.read();
+  }
+}
+
 int freeRam () 
 {
   extern int __heap_start, *__brkval; 
