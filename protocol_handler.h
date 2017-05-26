@@ -45,6 +45,16 @@ Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
   |    <amount><duration>     |
   =============================
 
+  =============================
+  |           SMCQ            |
+  =============================
+  |  3                        |
+  |    <motor>                |
+  |      <num LPCQs>          |
+  |      <amount><duration>   |
+  |      <amount><duration>   |
+  |      <amount><duration>   |
+  =============================
 
   =============================
   |           MMCQ            |
@@ -81,7 +91,7 @@ Single_Motor_Choreo_Queue smcqs[NUM_SMCQ];
   =============================
  */
 
-int create_lpcq(short *short_buffer){
+int create_lpcq(short *short_buffer, int start_pos){
 
   char char_buffer[5];
   int  i;
@@ -117,13 +127,22 @@ int create_lpcq(short *short_buffer){
   //Are there any lpcqs available and is the command within bounds
   if(i != NUM_LPCQ
      &&
-     motors[MOTOR_INDEX]->get_pos() + AMOUNT >=
+     start_pos + AMOUNT >=
      motors[MOTOR_INDEX]->get_lower_bound()
      &&
-     motors[MOTOR_INDEX]->get_pos() + AMOUNT <=
+     start_pos + AMOUNT <=
      motors[MOTOR_INDEX]->get_upper_bound())
     {
+      //Make the LPCQ
+      lpcqs[i] = Linear_Procedural_Command_Queue(
+                  start_pos,
+                  start_pos + AMOUNT,
+                  DURATION);
+
+
+      //Return its index
       return i;
+
   //Pick out the error
   }else if(i == NUM_LPCQ){
     Serial.println("No LPCQs available");
@@ -154,16 +173,6 @@ void handle_serial_commands
       digitalWrite(MOTOR_SWITCH_PIN, LOW);
       break;
     case(1):
-
-      /*
-      =============================
-      |        MOTORS ON          |
-      =============================
-      |  1                        |
-      =============================
-      */
-
-
       Serial.println("motors_on");
       digitalWrite(MOTOR_SWITCH_PIN, HIGH);
       break;
@@ -173,14 +182,10 @@ void handle_serial_commands
         Serial.println("LPCQ");
         Serial.readBytes(char_buffer, 1);
         MOTOR_INDEX = (int)char_buffer[0];
-        i = create_lpcq(short_buffer);
+        int start_pos = motors[MOTOR_INDEX]->get_pos();
+        i = create_lpcq(short_buffer, start_pos);
         //If successfully created an lpcq:
         if(i>=0){
-          lpcqs[i] = Linear_Procedural_Command_Queue(
-                                                     motors[MOTOR_INDEX]->get_pos(),
-                                                     motors[MOTOR_INDEX]->get_pos() + AMOUNT,
-                                                     DURATION);
-
           motors[MOTOR_INDEX]->add_command_queue(&lpcqs[i]);
         }
       }
@@ -189,19 +194,6 @@ void handle_serial_commands
     case(3):
       {
         Serial.println("SMCQ");
-        /*
-          =============================
-          |           SMCQ            |
-          =============================
-          |  3                        |
-          |    <motor>                |
-          |      <num LPCQs>          |
-          |      <amount><duration>   |
-          |      <amount><duration>   |
-          |      <amount><duration>   |
-          =============================
-        */
-
         short status;
         short smcq_index;
         short num_lpcqs;
@@ -237,15 +229,11 @@ void handle_serial_commands
           Serial.print("\n");
           smcqs[smcq_index]=Single_Motor_Choreo_Queue();
 
-          short pos_buffer;
+          int pos_buffer;
           pos_buffer = motors[MOTOR_INDEX]->get_pos();
           for(i=0;i<num_lpcqs;i++){
-            status = create_lpcq(short_buffer);
+            status = create_lpcq(short_buffer, pos_buffer);
             if(status>=0){
-              lpcqs[status] = Linear_Procedural_Command_Queue(
-                                                              pos_buffer,
-                                                              pos_buffer + AMOUNT,
-                                                              DURATION);
               Serial.println("Created LPCQ");
               pos_buffer = pos_buffer + AMOUNT;
 

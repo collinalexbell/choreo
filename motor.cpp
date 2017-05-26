@@ -53,7 +53,6 @@ void Motor::take_time_step(){
     //    It will be sent in the future
     //    Therefore, also set cur_command to NULL
     cur_command = NULL;
-    Serial.println(pos);
   }
 };
 
