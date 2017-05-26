@@ -1,8 +1,124 @@
 # Choreo
 ## Android/AVR library to create complex servo motor choreographies using a serial protocol 
 
-### How to use
+## Table of Contents
+-Why this library?
+-Protocol Written in Raw Bytes
+-How to Run Demo
+-How to Include into your own Project
+-Possible Modifications
 
+### Why this library?
+I wanted a way to store many commands for servo motors onto a low memory Arduino.
+
+The best way I found to do this was to only store the destinations I want to the motors to end up after a certian period of time and then have code procedurally generate the actual raw positions to send to the Servo motors
+
+This allows the programmer to efficiently say:
+
+```
+Move motor0 20 degrees taking .5 seconds to do so
+Then move motor0 20 degrees taking 1.5 seconds to do so
+Move motor 1 -45 degrees taking 2 seconds to do so
+```
+Each one of these 3 commands is called a *procedure*
+
+The real protocol is below and is written in raw bytes
+
+### Limitations:
+
+-Right now the library only supports linear interpolation, however I plan on writing other interpolation functions to ease the movement of the motors in and out. 
+
+-Each motor is limited to a buffer of 12 procedures on the ArduinoUno due to its low SRAM limitations.
+
+### Protocol: Written as Raw Bytes
+```
+  num_motors_in_command
+    motor_id
+      num_procedures_for_this_motor
+        procedure_id
+        amount
+        duration
+        .
+        .
+    motor_id
+      num_procedures_for_this_motor
+        procedure_id
+        amount
+        duration
+        .
+        .
+
+```
+
+### How to Run Demo 
+
+Connect two servo motors. One to pin 10 and one to pin 11.
+These pins can be changed. See *Possible Modifications* below.
+
+```
+cd <dir for all your scrap projects>
+git clone https://github.com/SlightlyCyborg/choreo.git
+```
+Open up the Arduino Editor and upload the choreo/choreo.ino
+Take note of the port the Arduino was attached on as you will need this later.
+
+I wrote Clojure client code to test the serial protocol.
+
+Make sure clojure is installed with [lein](https://github.com/technomancy/leiningen)
+
+If the port was not /dev/ttyACM0...change this code...
+
+```
+;choreo-tester/src/choreo_tester/core.clj
+
+(ns choreo-tester.core
+  (:use [serial.core]
+        [serial.util])
+  (:import [java.nio ByteBuffer]))
+
+(def s (open "/dev/ttyACM0" :baud-rate 9600))
+;       CHANGE THIS ^^
+
+```
+
+Then...run..
+
+```
+$ cd choreo-tester
+$ lein run
+```
+
+You should see the two motors move in sync.
+
+### How to Include into your own Project
+
+Make ~/sketchbook/libraries if it doesn't already exist
+```
+cd ~
+mkdir sketchbook
+mkdir libraries
+```
+
+CD into libraries & clone the choreo repo
+```
+cd ~/sketchbook/libraries
+git clone https://github.com/SlightlyCyborg/choreo.git
+```
+
+Copy choreo.ino into your project folder and modify it, making sure to change the name to the name of the folder it is in
+
+```
+mkdir ~/<myproject>
+cp ~/sketchbook/libraries/choreo/choreo.ino ~/<myproject>/<myproject>.ino
+```
+
+Make whatever edits you want to the file and upload it to your arduino.
+
+Write the client code that will send the commands to the arduino.
+Look at *Protocol: Written as Raw Bytes* above for details.
+
+
+### Possible Modifications
 If you have 2 servos connected to pins 10 and 11, then you can use the choreo.io demo as is.
 
 Some modifications you might want to make:
@@ -65,58 +181,7 @@ void choreo_loop(){
 }
 ```
 
-### Protocol: Written as raw bytes
-```
-  num_motors_in_command
-    motor_id
-      num_procedures_for_this_motor
-        procedure_id
-        amount
-        duration
-        .
-        .
-    motor_id
-      num_procedures_for_this_motor
-        procedure_id
-        amount
-        duration
-        .
-        .
 
-```
-
-### Demo protocol send code
-
-I wrote clojure code to test the protocol.
-
-Make sure clojure is installed with [lein](https://github.com/technomancy/leiningen)
-
-Make sure your Arduino is attached to /dev/ttyACM0 and has the choreo sketch loaded.
-
-If the Arduino is not attached to /dev/ttyACM0...change this code...
-
-
-```
-;choreo-tester/src/choreo_tester/core.clj
-
-(ns choreo-tester.core
-  (:use [serial.core]
-        [serial.util])
-  (:import [java.nio ByteBuffer]))
-
-(def s (open "/dev/ttyACM0" :baud-rate 9600))
-;       CHANGE THIS ^^
-
-```
-
-
-Then...run..
-```
-$ cd choreo-tester
-$ lein run
-```
-
-You should see the two motors move
 
 ### Contributing
 
