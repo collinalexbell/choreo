@@ -43,7 +43,6 @@ void handle_command(){
   byte i, y, motor_id, num_motors, num_procedures, procedure_id;
   short amount, duration;
   if(Serial.available()>0){
-    delay(1000);
     Serial.readBytes(char_buf, 1);
     num_motors = (byte)char_buf[0];
 
