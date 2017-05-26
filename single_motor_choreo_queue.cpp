@@ -10,14 +10,6 @@ Motor_Command* SMCQ::front()
   //If root->q->front is null, then the next node should be used
   //This is done by setting root to root->next.
   if(!active || !more_commands_to_execute){
-    Serial.println("Auto return NULL");
-    Serial.print("Not Active: ");
-    Serial.print(!active);
-    Serial.print("\n");
-
-    Serial.print("Not More_Commands: ");
-    Serial.print(!more_commands_to_execute);
-    Serial.print("\n");
     return NULL;
   }
 
@@ -32,11 +24,9 @@ Motor_Command* SMCQ::front()
       more_commands_to_execute = false;
       return NULL;
     }
-    Serial.println("Moving to next LPCQ");
     root_index = (root_index + 1) % mcq_buf_size;
     rv = front();
   }
-  //Serial.println(rv->pos);
   return rv;
 }
 
