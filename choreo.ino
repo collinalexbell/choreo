@@ -8,8 +8,8 @@ Motor *motors[2];
 
 void setup(){
   Serial.begin(9600);
-motors[0] = new Motor(0,10, 90);
-motors[1] = new Motor(1,11, 70);
+motors[0] = new Motor(0,10,90);
+motors[1] = new Motor(1,11,70);
   pinMode(MOTOR_SWITCH_PIN, OUTPUT);
   digitalWrite(MOTOR_SWITCH_PIN, LOW);
 Serial.println("Starting");
