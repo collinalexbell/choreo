@@ -3,32 +3,35 @@
 
 ## Table of Contents
 * Why this library?
+* High Level Overview
 * Protocol Written in Raw Bytes
 * How to Run Demo
 * How to Include into your own Project
 * Possible Modifications
 
 ### Why this library?
-I wanted a way to store many commands for servo motors onto a low memory Arduino.
+The official Arduino Servo library is great for sending single positions to a servo. However, another level of abstraction is needed if you wish to control the velocity and acceleration of the movement and synchronize it across multiple motors. The Arduino's limited RAM must also be seriously considered
 
-The best way I found to do this was to only store the destinations I want to the motors to end up after a certian period of time and then have code procedurally generate the actual raw positions to send to the Servo motors
+Choreo provides this abstraction by procedurally generating servo positions based on high level commands issued through its serial protocol
 
-This allows the programmer to efficiently say:
+### High Level Overview
+
+Choreo allows the programmer to efficiently say:
 
 ```
-Move motor0 20 degrees taking .5 seconds to do so
-Then move motor0 20 degrees taking 1.5 seconds to do so
-Move motor 1 -45 degrees taking 2 seconds to do so
+Move motor0 20 degrees with constant velocity, taking .5 seconds to do so
+Then move motor0 20 degrees with constant velocity, taking 1.5 seconds to do so
+Simultaneously, move motor 1 -45 degrees taking 2 seconds to do so
 ```
 Each one of these 3 commands is called a *procedure*
 
 Each motor's procedure buffer runs independently, so the above set of procedures would take 2 seconds total to run.
 
-The real protocol is below and is written in raw bytes
+The machine readable protocol documented below and is written in raw bytes.
 
 ### Limitations:
 
--Right now the library only supports linear interpolation, however I plan on writing other interpolation functions to ease the movement of the motors in and out. 
+-Right now the library only supports constant velocity, however I plan on writing other interpolation functions to ease the movement of the motors in and out. 
 
 -Each motor is limited to a buffer of 12 procedures on the ArduinoUno due to its low SRAM limitations.
 
