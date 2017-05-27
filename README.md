@@ -135,6 +135,9 @@ Some modifications you might want to make:
 
 change choreo.h
 ```
+Motor *motors[NUMBER_OF_MOTORS];
+  //ADD OR SUBTRACT MOTORS ^^^
+
 void choreo_setup(){
   motors[0] = new Motor(0,10,90); //Pin 10 is the servo signal pin
   motors[1] = new Motor(1,11,70); //Pin 11 is the servo signal pin
