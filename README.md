@@ -32,9 +32,9 @@ The machine readable protocol documented below and is written in raw bytes.
 
 ### Limitations:
 
--Right now the library only supports constant velocity, however I plan on writing other interpolation functions to ease the movement of the motors in and out. 
+* Right now the library only supports constant velocity, however I plan on writing other interpolation functions to ease the movement of the motors in and out. 
 
--Each motor is limited to a buffer of 12 procedures on the ArduinoUno due to its low SRAM limitations.
+* Each motor is limited to a buffer of 12 procedures on the ArduinoUno due to its low SRAM limitations.
 
 ### Protocol: Written as Raw Bytes
 ```
