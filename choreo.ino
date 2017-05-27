@@ -1,12 +1,14 @@
 #include <Servo.h>
 #include "choreo.h"
+#include <SoftwareSerial.h>
+
 
 void setup(){
-  SERIAL.begin(9600);
+  MY_SERIAL.begin(9600);
   choreo_setup();
   serialFlush();
   delay(2000);
-  SERIAL.println("OK");
+  MY_SERIAL.println("OK");
 }
 
 void loop(){

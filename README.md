@@ -147,16 +147,20 @@ void choreo_setup(){
 change constants.h
 
 ```
-#ifndef _CONSTANTS_H_
-#define _CONSTANTS_H_
-
-#define PROC_PER_MOTOR 10
+#define PROC_PER_MOTOR 12
 #define MOTOR_SWITCH_PIN 8
 #define NUMBER_OF_MOTORS 2
-//CHANGE THIS PERHAPS   ^^
 
-#define SERIAL Serial
-//CHANGE this  ^^     to BTSerial if using BTSerial like me!
+#define USE_BTSERIAL true
+//CHANGE this          ^^     to true if using BTSerial like me!
+
+#if USE_BTSERIAL
+SoftwareSerial BTSerial(5, 6);
+#define MY_SERIAL BTSerial
+
+#else
+#define MY_SERIAL Serial
+
 #endif
 ```
 

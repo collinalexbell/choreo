@@ -1,16 +1,26 @@
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
 
+#include <SoftwareSerial.h>
+
 #define PROC_PER_MOTOR 12
 #define MOTOR_SWITCH_PIN 8
 #define NUMBER_OF_MOTORS 2
 
-//Use a macro for use with BTSerial if desired
-#define SERIAL Serial
+#define USE_BTSERIAL true
+
+#if USE_BTSERIAL
+SoftwareSerial BTSerial(5, 6);
+#define MY_SERIAL BTSerial
+
+#else
+#define MY_SERIAL Serial
+
+#endif
 
 void serialFlush(){
-  while(SERIAL.available() > 0) {
-    char t = SERIAL.read();
+  while(MY_SERIAL.available() > 0) {
+    char t = MY_SERIAL.read();
   }
 }
 

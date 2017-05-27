@@ -40,7 +40,7 @@ class Motor{
     last_procedure_start_time = millis();
     position_at_procedure_start = position;
     if(procedure_index >= -1)
-    SERIAL.println(procedures[procedure_index].id);
+    MY_SERIAL.println(procedures[procedure_index].id);
     if(procedure_index == last_procedure_index){
       procedure_index = -1;
       last_procedure_index = -1;
