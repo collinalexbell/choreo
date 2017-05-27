@@ -7,7 +7,7 @@
 #define MOTOR_SWITCH_PIN 8
 #define NUMBER_OF_MOTORS 2
 
-#define USE_BTSERIAL true
+#define USE_BTSERIAL false
 
 #if USE_BTSERIAL
 SoftwareSerial BTSerial(5, 6);
