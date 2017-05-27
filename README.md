@@ -10,6 +10,7 @@
 * Possible Modifications
 
 ### Why this library?
+
 The official Arduino Servo library is great for sending single positions to a servo. However, another level of abstraction is needed if you wish to control the velocity and acceleration of the movement and synchronize it across multiple motors. The Arduino's limited RAM must also be seriously considered
 
 Choreo provides this abstraction by procedurally generating servo positions based on high level commands issued through its serial protocol
