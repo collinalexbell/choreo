@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "procedure.h"
 #include "constants.h"
+#include "Servo.h"
 
 class Motor{
  private:

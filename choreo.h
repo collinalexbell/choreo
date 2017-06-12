@@ -3,6 +3,7 @@
 
 #include "motor.h"
 #include "constants.h"
+#include "Servo.h"
 
 Motor *motors[NUMBER_OF_MOTORS];
 byte i, num_motors;
@@ -10,8 +11,9 @@ bool active = false;
 
 
 void choreo_setup(){
-  motors[0] = new Motor(0,10,90); //Pin 10 is the servo signal pin
-  motors[1] = new Motor(1,11,70); //Pin 11 is the servo signal pin
+  for(i=STARTING_PIN; i<STARTING_PIN+NUMBER_OF_MOTORS; i++){
+  motors[i-STARTING_PIN] = new Motor(i-STARTING_PIN, i, 90); //Pin 10 is the servo signal pin
+  }
   //ADD OR SUBTRACT MOTORS ^^^ OR CHANGE PINS
   // Motor(id, pin, starting position)
 
@@ -41,6 +43,9 @@ void handle_command(){
         duration = (unsigned char)char_buf[2] << 8 | (unsigned char)char_buf[3];
 
         motors[motor_id]->add_linear_procedure(procedure_id, amount, duration);
+	MY_SERIAL.print("Motor: ");
+	MY_SERIAL.print(motor_id);
+	MY_SERIAL.print("\n");
       }
     }
   }

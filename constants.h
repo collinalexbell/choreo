@@ -5,7 +5,8 @@
 
 #define PROC_PER_MOTOR 12
 #define MOTOR_SWITCH_PIN 8
-#define NUMBER_OF_MOTORS 2
+#define NUMBER_OF_MOTORS 12
+#define STARTING_PIN 22
 
 #define USE_BTSERIAL false
 

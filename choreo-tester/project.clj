@@ -5,4 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clj-serial "2.0.4-SNAPSHOT"]]
-  :main choreo-tester.core)
+  :main choreo-tester.core
+  :repl-options {:host "0.0.0.0"})
