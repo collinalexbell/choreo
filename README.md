@@ -38,12 +38,12 @@ The machine readable protocol documented below and is written in raw bytes.
 
 ### Protocol: Written as Raw Bytes
 ```
-  num_motors_in_command
-    motor_id
-      num_procedures_for_this_motor
-        procedure_id
-        amount
-        duration
+  num_motors_in_command (1 byte)
+    motor_id (1 byte)
+      num_procedures_for_this_motor (1 byte)
+        procedure_id (1 byte)
+        amount in deg (2 bytes)
+        duration in ms (2 bytes)
         .
         .
     motor_id
