@@ -1,5 +1,5 @@
 # Choreo
-## Android/AVR library to create complex servo motor choreographies using a serial protocol 
+## AVR library to create complex servo motor choreographies using a serial protocol 
 
 ## Table of Contents
 * Why this library?
