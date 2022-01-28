@@ -4,8 +4,8 @@ import time
 class Bot:
     zrot_id = 2
     gripper_id = 0
-    backarm_id = 1
-    forarm_id = 3
+    backarm_id = 3
+    forarm_id = 1
     motor_ids = [
         gripper_id,
         backarm_id,
@@ -28,7 +28,7 @@ class Bot:
         return movements_per_motor
 
     def n_bytes(integer, n):
-        return integer.to_bytes(n, "big")
+        return integer.to_bytes(n, "big", signed=True)
 
     def extend_output_per_motor(output, movements_per_motor):
         for _, id in enumerate(Bot.motor_ids):
@@ -91,3 +91,44 @@ def simple_command():
     time.sleep(3)
     ser.write(b'\x01\x01\x01\x00\x00\x28\x07\xD0')
     time.sleep(6)
+
+
+def test_single_motor_movement():
+    ser = serial.Serial("/dev/ttyUSB0")
+    time.sleep(3)
+    bot = Bot(ser)
+    bot.exec_procedure([
+        bot.zrot(degrees=40, in_millis=1000),
+        bot.zrot(degrees=-40, in_millis=1000),
+        bot.backarm(degrees=0, in_millis=2000),
+        bot.forarm(degrees=0, in_millis=2000),
+        bot.gripper(degrees=0, in_millis=2000)
+    ])
+    time.sleep(3.1)
+    bot.exec_procedure([
+        bot.zrot(degrees=0, in_millis=2000),
+        bot.backarm(degrees=60, in_millis=1000),
+        bot.backarm(degrees=-60, in_millis=1000),
+        bot.forarm(degrees=0, in_millis=2000),
+        bot.gripper(degrees=0, in_millis=2000)
+    ])
+    time.sleep(3.1)
+    bot.exec_procedure([
+        bot.zrot(degrees=0, in_millis=2000),
+        bot.backarm(degrees=0, in_millis=2000),
+        bot.forarm(degrees=60, in_millis=1000),
+        bot.forarm(degrees=-60, in_millis=1000),
+        bot.gripper(degrees=0, in_millis=2000)
+    ])
+    time.sleep(3.1)
+    bot.exec_procedure([
+        bot.zrot(degrees=0, in_millis=2000),
+        bot.backarm(degrees=0, in_millis=2000),
+        bot.forarm(degrees=0, in_millis=2000),
+        bot.gripper(degrees=40, in_millis=1000),
+        bot.gripper(degrees=-40, in_millis=1000)
+    ])
+    time.sleep(3.1)
+    ser.close()
+
+test_single_motor_movement()
