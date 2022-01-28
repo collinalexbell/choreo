@@ -131,4 +131,5 @@ def test_single_motor_movement():
     time.sleep(3.1)
     ser.close()
 
-test_single_motor_movement()
+if __name__ == '__main__':
+    test_single_motor_movement()
