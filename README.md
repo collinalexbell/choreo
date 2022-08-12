@@ -206,6 +206,6 @@ void choreo_loop(){
 ## License
 
 
-Copyright © 2017, SlightlyCyborg
+Copyright © 2017, kuberlog
 
 Distributed under the MIT License.
